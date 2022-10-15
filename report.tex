@@ -5,16 +5,15 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
 
-\graphicspath{{./image}}
-\graphicspath{{./img2}}
 
+\graphicspath{{./img2/}{./images/25_50/}{./images/1_25/}}
 \begin{document}
-
-\title{COMP90086 Computer Vision\\
-Final Project: Stereo Disparity\\
+\title{COMP90086 Computer Vision Final Project\\
+Stereo Disparity
 }
-
 \author{
 \IEEEauthorblockN{Jun Li Chen}
 \IEEEauthorblockA{1043258}
@@ -22,13 +21,20 @@ Final Project: Stereo Disparity\\
 \IEEEauthorblockN{Tianli Cheng}
 \IEEEauthorblockA{1128434}
 }
-
 \maketitle
-
-
 \section{Introduction}
 \section{Methodology}
 \section{Evaluation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8.8cm]{702_output_1_25.png}
+    \captionof{figure}{Disparity map output with block size 1 \& search size 25.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=11cm]{702_stats_1_25.png}
+    \captionof{figure}{Disparity performance with block size 1 \& search size 25. (See Appendix A for bar chart values)}
+\end{figure}
 \section{Improvements}
 In digital image processing, different similarity measurement functions exist including the sum of absolute difference (SAD), the sum of square difference (SSD), etc. Six functions have been chosen among these to make a performance comparison in this report. They are SAD, SSD, the zero-mean sum of absolute difference (ZSAD), the zero-mean sum of square difference (ZSSD), and hamming distance of census transform (HDCT). 
 
@@ -64,16 +70,14 @@ It first finds the differences between each element and the mean intensity value
 By only keeping the deviation, these functions are less sensitive to a general shift in intensity which can be caused by a change in lightning. However, normalization can be taken further by including the relation of a single pixel with the image block it belongs to into consideration. Normalized Cross-Correlation (NCC) is one of the most classic metrics including local relations when mapping similarity between images. It sums the cross-correlation between blocks and then divides it by the product of the square root of the sum of the square of both image blocks, as in:
 
 \begin{equation*}
-    \begin{aligned}
-        NCC={} & \frac{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}*W2_{[i,j]}}{\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}^2}*\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W2_{[i,j]}^2}}
-    \end{aligned}
+    NCC=\frac{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}*W2_{[i,j]}}{\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}^2}*\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W2_{[i,j]}^2}}
 \end{equation*}
 
 NCC is less sensitive to a linear change in lightning intensity but computationally expensive [3]. Different approaches, such as coarse-to-fine and multi-resolution search, exist to reduce the computational complexity for NCC, but these include much more complex methods like neural networks beyond the scope of this report. Hence, HDCT has been selected as an alternative to NCC and also normalized the image pattern by local correlation. 
 
 The census transform records each pixel holding a lower intensity compared to the center pixel as 0 and the rest as 1. Figure 1 gives an example of how census transform works in a 3 by 3 window.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=8cm]{fig1.png}
     \caption{Census transform}
@@ -83,7 +87,7 @@ It represents each pixel's relation to the center pixel in a binary form. Theref
 
 The Hamming distance of the census transform between two blocks is calculated by performing a XOR operation on the two 1-D binary representations. By counting the number of 1 existing in the outcome of XOR between blocks, the result represents the number of different patterns. Figure 2 gives an example of how it works.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=6cm]{fig2.png}
     \caption{Hamming distance of Census transform}
@@ -99,49 +103,59 @@ The number of iterations is further deducted by assuming each pixel in the image
 \end{equation*}
 
 \section{Comparison / Conclusion}
+asdf
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8.8cm]{702_output_25_50.png}
+    \captionof{figure}{Disparity map output with block size 25 \& search size 50.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=11cm]{stats_25_50.png}
+    \captionof{figure}{Disparity performance with block size 25 \& search size 50. (See Appendix A for bar chart values)}
+\end{figure}
 
-% \subsection{Figures and Tables}
-% \paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-% bottom of columns. Avoid placing them in the middle of columns. Large 
-% figures and tables may span across both columns. Figure captions should be 
-% below the figures; table heads should appear above the tables. Insert 
-% figures and tables after they are cited in the text. Use the abbreviation 
-% ``Fig.~'', even at the beginning of a sentence.
-
-% \begin{table}[htbp]
-% \caption{Table Type Styles}
-% \begin{center}
-% \begin{tabular}{|c|c|c|c|}
-% \hline
-% \textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-% \cline{2-4} 
-% \textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-% \hline
-% copy& More table copy$^{\mathrm{a}}$& &  \\
-% \hline
-% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-% \end{tabular}
-% \label{tab1}
-% \end{center}
-% \end{table}
-
-
-% Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-% rather than symbols or abbreviations when writing Figure axis labels to 
-% avoid confusing the reader. As an example, write the quantity 
-% ``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-% units in the label, present them within parentheses. Do not label axes only 
-% with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-% \{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-% quantities and units. For example, write ``Temperature (K)'', not 
-% ``Temperature/K''.
-
-
+\newpage
 \begin{thebibliography}{00}
 \bibitem{1} Schmidt, A., Kraft, M. and Kasiński, A., 2010. An Evaluation of Image Feature Detectors and Descriptors for Robot Navigation. Computer Vision and Graphics, pp.251-259.
 \bibitem{2} Sarika, S., Deepambika, V. and Rahman, M., 2015. Census Filtering Based Stereomatching under Varying Radiometric Conditions. Procedia Computer Science, 58, pp.315-320.
 \bibitem{3} Tsai, D. and Lin, C., 2003. Fast normalized cross correlation for defect detection. Pattern Recognition Letters, 24(15), pp.2625-2631.
 \end{thebibliography}
 \vspace{12pt}
+
+\section*{Appendix A}
+\begin{center}
+    \begin{tabular}{l c c c c c}
+        \textbf{Function} & \textbf{SSD} & \textbf{SAD} & \textbf{ZSAD} & \textbf{ZSSD} & \textbf{HD} \\ [0.5ex] 
+        Mean & 16.85 & 19.45 & 14.06 & 14.29 & 16.53 \\
+        SD & 2.79 & 2.66 & 2.99 & 2.91 & 2.62
+    \end{tabular}
+    \captionof{table}{RMS statistic table values}
+\end{center}
+\begin{center}
+    \begin{tabular}{l c c c c c}
+        \textbf{Function} & \textbf{SSD} & \textbf{SAD} & \textbf{ZSAD} & \textbf{ZSSD} & \textbf{HD} \\ [0.5ex] 
+        Mean ($<4$) & 0.536 & 0.376 & 0.642 & 0.634 & 0.555 \\
+        Mean ($<2$) & 0.411 & 0.273 & 0.491 & 0.490 & 0.425 \\
+        Mean ($<1$) & 0.303 & 0.192 & 0.365 & 0.366 & 0.313 \\
+        Mean ($<0.5$) & 0.120 & 0.071 & 0.145 & 0.148 & 0.123 \\
+        Mean ($<0.25$) & 0.120 & 0.071 & 0.145 & 0.148 & 0.123 \\
+        & & & & & \\
+        SD ($<4$) & 0.057 & 0.057 & 0.046 & 0.057 & 0.049 \\
+        SD ($<2$) & 0.050 & 0.050 & 0.036 & 0.042 & 0.042 \\
+        SD ($<1$) & 0.043 & 0.038 & 0.033 &  0.035 & 0.037 \\
+        SD ($<0.5$) & 0.022 & 0.016 & 0.018 & 0.019 & 0.016 \\
+        SD ($<0.25$) & 0.022 & 0.016 & 0.018 & 0.019 & 0.016 \\
+    \end{tabular}
+    \captionof{table}{Pixel error fraction statistic table values}
+\end{center}
+\begin{center}
+    \begin{tabular}{l c c c c c}
+        \textbf{Function} & \textbf{SSD} & \textbf{SAD} & \textbf{ZSAD} & \textbf{ZSSD} & \textbf{HD} \\ [0.5ex] 
+        Mean & 0.466 & 0.453 & 1.553 & 1.460 & 1.294 \\
+        SD & 0.019 & 0.004 & 0.022 & 0.028 & 0.042
+    \end{tabular}
+    \captionof{table}{Time taken statistic table values}
+\end{center}
 
 \end{document}
