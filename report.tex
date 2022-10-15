@@ -8,7 +8,6 @@
 \usepackage{float}
 \usepackage{caption}
 
-
 \graphicspath{{./img2/}{./images/25_50/}{./images/1_25/}}
 \begin{document}
 \title{COMP90086 Computer Vision Final Project\\
@@ -24,7 +23,15 @@ Stereo Disparity
 \maketitle
 \section{Introduction}
 \section{Methodology}
-\section{Evaluation}
+\subsection{Implementation}
+Before running each image pair through our program to create a disparity map, a bilateral filter smoothing function is applied to the image pairs. This was done to reduce the effect of noise on our disparity map output. Bilateral filter was chosen as it preserves edges in the image while smoothening the image.
+
+The program iterates through pixels on the left image, while creating a sliding window of search size 25. By using a comparison function like SSD or SAD, the pixel index with the lowest difference value in the sliding window to the original pixel on the left image is used as the pixel index to calculate the value of pixel shift as the disparity value for said pixel.
+
+\subsection{Evaluation}
+In the output disparity map with a block size of 1 and search size of 25 as shown in Figure 1 below, there are many adjacent areas of high and low disparity, which corresponds to the high RMS value and low pixel error fractions as in Figure 2. This can be caused by noise in the image, or the small search size.
+
+The time taken for SSD and SAD function to complete the disparity map calculation is also very high at around 90--95 seconds for each image.
 \begin{figure}[H]
     \centering
     \includegraphics[width=8.8cm]{702_output_1_25.png}
@@ -35,8 +42,22 @@ Stereo Disparity
     \includegraphics[height=11cm]{702_stats_1_25.png}
     \captionof{figure}{Disparity performance with block size 1 \& search size 25. (See Appendix A for bar chart values)}
 \end{figure}
-\section{Improvements}
-In digital image processing, different similarity measurement functions exist including the sum of absolute difference (SAD), the sum of square difference (SSD), etc. Six functions have been chosen among these to make a performance comparison in this report. They are SAD, SSD, the zero-mean sum of absolute difference (ZSAD), the zero-mean sum of square difference (ZSSD), and hamming distance of census transform (HDCT). 
+\section{Improvement}
+\subsection{Implementation}
+Due to the low performance and slow program runtime, the original program was modified to use different comparison functions including ZSAD, ZSSD and HDCT. Furthermore, instead of iterating through each individual pixel to calculate each disparity value, the modified program iterates through a block of size n by n pixels, comparing it to the corresponding sliding window search block of the same size. For example, we used a pixel block size of 25 (width 25, height 25) on the left image, while searching through the right image with a sliding window of size 50 (width 50, height 25). We assume there is no vertical disparity between the image pairs, therefore only the width of the sliding window is varied.
+\subsection{Evaluation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8.8cm]{702_output_25_50.png}
+    \captionof{figure}{Disparity map output with block size 25 \& search size 50.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=11cm]{stats_25_50.png}
+    \captionof{figure}{Disparity performance with block size 25 \& search size 50. (See Appendix A for bar chart values)}
+\end{figure}
+\section{Analysis}
+In digital image processing, different similarity measurement functions exists including the sum of absolute difference (SAD), the sum of square difference (SSD) etc. Three other functions have been chosen other than SAD and SSD to make a performance comparison in this report. They are zero-mean sum of absolute difference (ZSAD), the zero-mean sum of square difference (ZSSD), and Hamming distance of census transform (HDCT). 
 
 SAD of block W1 and block W2 was calculated by summing up the intensity differences between each corresponding pixel pair, as in:
 \begin{equation*}
@@ -67,14 +88,6 @@ It first finds the differences between each element and the mean intensity value
     \end{aligned}
 \end{equation*}
 
-By only keeping the deviation, these functions are less sensitive to a general shift in intensity which can be caused by a change in lightning. However, normalization can be taken further by including the relation of a single pixel with the image block it belongs to into consideration. Normalized Cross-Correlation (NCC) is one of the most classic metrics including local relations when mapping similarity between images. It sums the cross-correlation between blocks and then divides it by the product of the square root of the sum of the square of both image blocks, as in:
-
-\begin{equation*}
-    NCC=\frac{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}*W2_{[i,j]}}{\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}^2}*\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W2_{[i,j]}^2}}
-\end{equation*}
-
-NCC is less sensitive to a linear change in lightning intensity but computationally expensive [3]. Different approaches, such as coarse-to-fine and multi-resolution search, exist to reduce the computational complexity for NCC, but these include much more complex methods like neural networks beyond the scope of this report. Hence, HDCT has been selected as an alternative to NCC and also normalized the image pattern by local correlation. 
-
 The census transform records each pixel holding a lower intensity compared to the center pixel as 0 and the rest as 1. Figure 1 gives an example of how census transform works in a 3 by 3 window.
 
 \begin{figure}[H]
@@ -102,18 +115,7 @@ The number of iterations is further deducted by assuming each pixel in the image
     \frac{400*881}{block\_width*block\_height*window\_size}
 \end{equation*}
 
-\section{Comparison / Conclusion}
-asdf
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=8.8cm]{702_output_25_50.png}
-    \captionof{figure}{Disparity map output with block size 25 \& search size 50.}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[height=11cm]{stats_25_50.png}
-    \captionof{figure}{Disparity performance with block size 25 \& search size 50. (See Appendix A for bar chart values)}
-\end{figure}
+\section{Conclusion}
 
 \newpage
 \begin{thebibliography}{00}
