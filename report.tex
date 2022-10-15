@@ -34,12 +34,12 @@ In digital image processing, different similarity measurement functions exist in
 
 SAD of block W1 and block W2 was calculated by summing up the intensity differences between each corresponding pixel pair, as in:
 \begin{equation*}
-    SAD_{(W1,W2)}=\sum^{n}_{i=0}\sum^{m}_{j=0}|W1[i,j]-W2[i,j]|
+    SAD=\sum^{n}_{i=0}\sum^{m}_{j=0}|W1[i,j]-W2[i,j]|
 \end{equation*}
 
 Similarly, the SSD of block W1 and block W2 was calculated by summing up the square of intensity differences between each corresponding pixel pair, as in:
 \begin{equation*}
-    SSD_{(W1,W2)}=\sum^{n}_{i=0}\sum^{m}_{j=0}(W1[i,j]-W2[i,j])^2
+    SSD=\sum^{n}_{i=0}\sum^{m}_{j=0}(W1[i,j]-W2[i,j])^2
 \end{equation*}
 
 SSD is more discriminative compared to SAD since the differences between image patches are amplified by squaring [1]. It means that SSD is more sensitive to large differences compared to SAD. In case there is one single pixel holding a value that is much larger than the corresponding pixel in the other image block compared to the rest, the dissimilarity score given by SSD can be much higher than what will be given by SAD. It means that those pixels holding small differences are more likely to be ignored by SSD.
@@ -48,7 +48,7 @@ Hence, two other similarity measurement functions, ZSAD and ZSSD, are chosen to 
 
 \begin{equation*}
     \begin{aligned}
-        ZSAD_{(W1,W2)}= {} & \sum^{n}_{i=0}\sum^{m}_{j=0}|(W1_{[i,j]}-\frac{1}{nm}\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]})\\
+        ZSAD= {} & \sum^{n}_{i=0}\sum^{m}_{j=0}|(W1_{[i,j]}-\frac{1}{nm}\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]})\\
         & -(W2_{[i,j]}-\frac{1}{nm}W2_{[i,j]})|
     \end{aligned}
 \end{equation*}
@@ -56,7 +56,7 @@ Hence, two other similarity measurement functions, ZSAD and ZSSD, are chosen to 
 It first finds the differences between each element and the mean intensity value in both image blocks, then finds the absolute differences of the corresponding deviation. Similarly, ZSSD was calculated by summing up the square of deviation differences between each corresponding pixel pair, as in:
 \begin{equation*}
     \begin{aligned}
-        ZSSD_{(W1,W2)}= {} & \sum^{n}_{i=0}\sum^{m}_{j=0}((W1_{[i,j]}-\frac{1}{nm}\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]})- \\
+        ZSSD= {} & \sum^{n}_{i=0}\sum^{m}_{j=0}((W1_{[i,j]}-\frac{1}{nm}\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]})- \\
         & (W2_{[i,j]}-\frac{1}{nm}W2_{[i,j]}))^2
     \end{aligned}
 \end{equation*}
@@ -65,7 +65,7 @@ By only keeping the deviation, these functions are less sensitive to a general s
 
 \begin{equation*}
     \begin{aligned}
-        NCC_{(W1,W2)}={} &\frac{1}{2}
+        NCC={} & \frac{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}*W2_{[i,j]}}{\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]}^2}*\sqrt{\sum^{n}_{i=0}\sum^{m}_{j=0}W2_{[i,j]}^2}}
     \end{aligned}
 \end{equation*}
 
