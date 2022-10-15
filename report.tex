@@ -6,74 +6,141 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 
+\graphicspath{{./image}}
+\graphicspath{{./img2}}
+
 \begin{document}
 
 \title{COMP90086 Computer Vision\\
 Final Project: Stereo Disparity\\
 }
 
-\author{\IEEEauthorblockN{Jun Li Chen}
+\author{
+\IEEEauthorblockN{Jun Li Chen}
 \IEEEauthorblockA{1043258}
 \and
-\IEEEauthorblockN{XXX}
-\IEEEauthorblockA{XXX}
-\and
+\IEEEauthorblockN{Tianli Cheng}
+\IEEEauthorblockA{1128434}
 }
 
 \maketitle
 
-\begin{abstract}
-This document is a model and instructions for \LaTeX.
-\end{abstract}
 
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits. 
+\section{Methodology}
+\section{Evaluation}
+\section{Improvements}
+In digital image processing, different similarity measurement functions exist including the sum of absolute difference (SAD), the sum of square difference (SSD), etc. Six functions have been chosen among these to make a performance comparison in this report. They are SAD, SSD, the zero-mean sum of absolute difference (ZSAD), the zero-mean sum of square difference (ZSSD), and hamming distance of census transform (HDCT). 
 
-\subsection{Figures and Tables}
-\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-bottom of columns. Avoid placing them in the middle of columns. Large 
-figures and tables may span across both columns. Figure captions should be 
-below the figures; table heads should appear above the tables. Insert 
-figures and tables after they are cited in the text. Use the abbreviation 
-``Fig.~'', even at the beginning of a sentence.
+SAD of block W1 and block W2 was calculated by summing up the intensity differences between each corresponding pixel pair, as in:
+\begin{equation*}
+    SAD_{(W1,W2)}=\sum^{n}_{i=0}\sum^{m}_{j=0}|W1[i,j]-W2[i,j]|
+\end{equation*}
 
-\begin{table}[htbp]
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-\hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
-\hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-\end{tabular}
-\label{tab1}
-\end{center}
-\end{table}
+Similarly, the SSD of block W1 and block W2 was calculated by summing up the square of intensity differences between each corresponding pixel pair, as in:
+\begin{equation*}
+    SSD_{(W1,W2)}=\sum^{n}_{i=0}\sum^{m}_{j=0}(W1[i,j]-W2[i,j])^2
+\end{equation*}
+
+SSD is more discriminative compared to SAD since the differences between image patches are amplified by squaring [1]. It means that SSD is more sensitive to large differences compared to SAD. In case there is one single pixel holding a value that is much larger than the corresponding pixel in the other image block compared to the rest, the dissimilarity score given by SSD can be much higher than what will be given by SAD. It means that those pixels holding small differences are more likely to be ignored by SSD.
+
+Hence, two other similarity measurement functions, ZSAD and ZSSD, are chosen to perform a certain degree of normalization avoiding the result being biased by large values. ZSAD between blocks is calculated by summing up the deviation differences between each corresponding pixel pair, as in:
+
+\begin{equation*}
+    \begin{aligned}
+        ZSAD_{(W1,W2)}= {} & \sum^{n}_{i=0}\sum^{m}_{j=0}|(W1_{[i,j]}-\frac{1}{nm}\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]})\\
+        & -(W2_{[i,j]}-\frac{1}{nm}W2_{[i,j]})|
+    \end{aligned}
+\end{equation*}
+
+It first finds the differences between each element and the mean intensity value in both image blocks, then finds the absolute differences of the corresponding deviation. Similarly, ZSSD was calculated by summing up the square of deviation differences between each corresponding pixel pair, as in:
+\begin{equation*}
+    \begin{aligned}
+        ZSSD_{(W1,W2)}= {} & \sum^{n}_{i=0}\sum^{m}_{j=0}((W1_{[i,j]}-\frac{1}{nm}\sum^{n}_{i=0}\sum^{m}_{j=0}W1_{[i,j]})- \\
+        & (W2_{[i,j]}-\frac{1}{nm}W2_{[i,j]}))^2
+    \end{aligned}
+\end{equation*}
+
+By only keeping the deviation, these functions are less sensitive to a general shift in intensity which can be caused by a change in lightning. However, normalization can be taken further by including the relation of a single pixel with the image block it belongs to into consideration. Normalized Cross-Correlation (NCC) is one of the most classic metrics including local relations when mapping similarity between images. It sums the cross-correlation between blocks and then divides it by the product of the square root of the sum of the square of both image blocks, as in:
+
+\begin{equation*}
+    \begin{aligned}
+        NCC_{(W1,W2)}={} &\frac{1}{2}
+    \end{aligned}
+\end{equation*}
+
+NCC is less sensitive to a linear change in lightning intensity but computationally expensive (D.M. Tsai et al., 2003). Different approaches, such as coarse-to-fine and multi-resolution search, exist to reduce the computational complexity for NCC, but these include much more complex methods like neural networks beyond the scope of this report. Hence, HDCT has been selected as an alternative to NCC and also normalized the image pattern by local correlation. 
+
+The census transform records each pixel holding a lower intensity compared to the center pixel as 0 and the rest as 1. Figure 1 gives an example of how census transform works in a 3 by 3 window.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{fig1.png}
+    \caption{Census transform}
+\end{figure}
+
+It represents each pixel's relation to the center pixel in a binary form. Therefore, it is non-parametric and insensitive to radiometric variations [2].
+
+The Hamming distance of the census transform between two blocks is calculated by performing a XOR operation on the two 1-D binary representations. By counting the number of 1 existing in the outcome of XOR between blocks, the result represents the number of different patterns. Figure 2 gives an example of how it works.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6cm]{fig2.png}
+    \caption{Hamming distance of Census transform}
+\end{figure}
+
+It is found that the computational time of pixel-wise disparity calculation is extremely long in this case since experiment photos all have 400 by 881 pixels. The function will iterate $400*881*88=31011200$ times if it searches every pixel on the left image and finds correspondence on the right image on the same line. The iteration must be deducted to improve the method's feasibility.
+
+By setting a search size, the program will not iterate over all pixels laying on the same line on the right image but only within a defined searching window of fixed size. Meanwhile, the function will search those image blocks with center coordinates closer to the original coordinate of the block cropped from the left image first, since the correspondence is more likely to be found in those locations.
+
+The number of iterations is further deducted by assuming each pixel in the image block holds the same disparity. By replacing pixel-wise correspondence searching with block-wise correspondence searching, the maximum number of iterations becomes:
+\begin{equation*}
+    \frac{400*881}{block\_width*block\_height*window\_size}
+\end{equation*}
+
+\section{Comparison / Conclusion}
+
+% \subsection{Figures and Tables}
+% \paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
+% bottom of columns. Avoid placing them in the middle of columns. Large 
+% figures and tables may span across both columns. Figure captions should be 
+% below the figures; table heads should appear above the tables. Insert 
+% figures and tables after they are cited in the text. Use the abbreviation 
+% ``Fig.~'', even at the beginning of a sentence.
+
+% \begin{table}[htbp]
+% \caption{Table Type Styles}
+% \begin{center}
+% \begin{tabular}{|c|c|c|c|}
+% \hline
+% \textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
+% \cline{2-4} 
+% \textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
+% \hline
+% copy& More table copy$^{\mathrm{a}}$& &  \\
+% \hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+% \end{tabular}
+% \label{tab1}
+% \end{center}
+% \end{table}
 
 
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-rather than symbols or abbreviations when writing Figure axis labels to 
-avoid confusing the reader. As an example, write the quantity 
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-units in the label, present them within parentheses. Do not label axes only 
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-quantities and units. For example, write ``Temperature (K)'', not 
-``Temperature/K''.
+% Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
+% rather than symbols or abbreviations when writing Figure axis labels to 
+% avoid confusing the reader. As an example, write the quantity 
+% ``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
+% units in the label, present them within parentheses. Do not label axes only 
+% with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
+% \{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
+% quantities and units. For example, write ``Temperature (K)'', not 
+% ``Temperature/K''.
 
-\section*{References}
-
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
-abstract or reference list. Use letters for table footnotes.
 
 \begin{thebibliography}{00}
-\bibitem{1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{1} Schmidt, A., Kraft, M. and Kasiński, A., 2010. An Evaluation of Image Feature Detectors and Descriptors for Robot Navigation. Computer Vision and Graphics, pp.251-259.
+\bibitem{2} Sarika, S., Deepambika, V. and Rahman, M., 2015. Census Filtering Based Stereomatching under Varying Radiometric Conditions. Procedia Computer Science, 58, pp.315-320.
+\bibitem{3} Tsai, D. and Lin, C., 2003. Fast normalized cross correlation for defect detection. Pattern Recognition Letters, 24(15), pp.2625-2631.
 \end{thebibliography}
 \vspace{12pt}
 
