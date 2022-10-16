@@ -29,7 +29,21 @@ Different cost functions exist for similarity computation. This report selects s
 \subsection{Implementation}
 Before running each image pair through our program to create a disparity map, a bilateral filter smoothing function is applied to the image pairs. This was done to reduce the effect of noise on our disparity map output. Bilateral filter was chosen as it preserves edges in the image while smoothening the image.
 
-The program iterates through pixels on the left image, while creating a sliding window of search size 25. By using a comparison function like SSD or SAD, the pixel index with the lowest difference value in the sliding window to the original pixel on the left image is used as the pixel index to calculate the value of pixel shift as the disparity value for said pixel.
+The program iterates through pixels on the left image, while creating a sliding window of search size 25. The sum of absolute difference (SAD) and the sum of square difference (SSD) are selected as the classic similarity measurement functions to start with.
+
+SAD of block W1 and block W2 was calculated by summing up the intensity differences between each corresponding pixel pair, as in:
+\begin{equation*}
+    SAD=\sum^{n}_{i=0}\sum^{m}_{j=0}|W1[i,j]-W2[i,j]|
+\end{equation*}
+
+Similarly, the SSD of block W1 and block W2 was calculated by summing up the square of intensity differences between each corresponding pixel pair, as in:
+\begin{equation*}
+    SSD=\sum^{n}_{i=0}\sum^{m}_{j=0}(W1[i,j]-W2[i,j])^2
+\end{equation*}
+
+SSD is more discriminative compared to SAD since the differences between image patches are amplified by squaring [1]. In case there is one single pixel holding a value that is much larger compared to the rest in the block, SSD will score it higher than SAD does. It means that those pixels holding small differences are more likely to be ignored by SSD.
+
+The pixel index with the lowest difference value in the sliding window to the original pixel on the left image is used as the pixel index to calculate the value of pixel shift as the disparity value for said pixel.
 \subsection{Evaluation}
 In the output disparity map with a block size of 1 and search size of 25 as shown in Figure 1 below, there are many adjacent areas of high and low disparity, which corresponds to the high RMS value and low pixel error fractions as in Figure 2. This can be caused by noise in the image, or the small search size.
 
@@ -47,33 +61,10 @@ The time taken for SSD and SAD function to complete the disparity map calculatio
 \section{Improvement}
 \subsection{Implementation}
 Due to the low performance and slow program runtime, the original program was modified to use different comparison functions including ZSAD, ZSSD and HDCT. Furthermore, instead of iterating through each individual pixel to calculate each disparity value, the modified program iterates through a block of size n by n pixels, comparing it to the corresponding sliding window search block of the same size. For example, we used a pixel block size of 25 (width 25, height 25) on the left image, while searching through the right image with a sliding window of size 50 (width 50, height 25). We assume there is no vertical disparity between the image pairs, therefore only the width of the sliding window is varied.
-\subsection{Evaluation}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=8.8cm]{702_output_25_50.png}
-    \captionof{figure}{Disparity map output with block size 25 \& search size 50.}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[height=11cm]{stats_25_50.png}
-    \captionof{figure}{Disparity performance with block size 25 \& search size 50. (See Appendix A for bar chart values)}
-\end{figure}
-\section{Analysis}
-In digital image processing, different similarity measurement functions exists including the sum of absolute difference (SAD), the sum of square difference (SSD) etc. Three other functions have been chosen other than SAD and SSD to make a performance comparison in this report. They are zero-mean sum of absolute difference (ZSAD), the zero-mean sum of square difference (ZSSD), and Hamming distance of census transform (HDCT). 
 
-SAD of block W1 and block W2 was calculated by summing up the intensity differences between each corresponding pixel pair, as in:
-\begin{equation*}
-    SAD=\sum^{n}_{i=0}\sum^{m}_{j=0}|W1[i,j]-W2[i,j]|
-\end{equation*}
+Moreover, three other have been chosen other than SAD and SSD to make a performance comparison in this report. They are zero-mean sum of absolute difference (ZSAD), the zero-mean sum of square difference (ZSSD), and Hamming distance of census transform (HDCT). 
 
-Similarly, the SSD of block W1 and block W2 was calculated by summing up the square of intensity differences between each corresponding pixel pair, as in:
-\begin{equation*}
-    SSD=\sum^{n}_{i=0}\sum^{m}_{j=0}(W1[i,j]-W2[i,j])^2
-\end{equation*}
-
-SSD is more discriminative compared to SAD since the differences between image patches are amplified by squaring [1]. It means that SSD is more sensitive to large differences compared to SAD. In case there is one single pixel holding a value that is much larger than the corresponding pixel in the other image block compared to the rest, the dissimilarity score given by SSD can be much higher than what will be given by SAD. It means that those pixels holding small differences are more likely to be ignored by SSD.
-
-Hence, two other similarity measurement functions, ZSAD and ZSSD, are chosen to perform a certain degree of normalization avoiding the result being biased by large values. ZSAD between blocks is calculated by summing up the deviation differences between each corresponding pixel pair, as in:
+ZSAD and ZSSD, are chosen to perform a certain degree of normalization avoiding the result being biased by large values. ZSAD between blocks is calculated by summing up the deviation differences between each corresponding pixel pair, as in:
 
 \begin{equation*}
     \begin{aligned}
@@ -89,6 +80,8 @@ It first finds the differences between each element and the mean intensity value
         & (W2_{[i,j]}-\frac{1}{nm}W2_{[i,j]}))^2
     \end{aligned}
 \end{equation*}
+
+By only keeping the deviation, these functions are less sensitive to a general shift in intensity which can be caused by a change in lightning. However, normalization can be taken further by including the relation of a single pixel with the image block it belongs to into consideration. Normalized Cross-Correlation (NCC) is one of the most classic metrics including local relations when mapping similarity between images. It is less sensitive to a linear change in lightning intensity but computationally expensive (D.M. Tsai et al., 2003). Hence, HDCT has been selected as an alternative to NCC and also normalized the image pattern by local correlation. 
 
 The census transform records each pixel holding a lower intensity compared to the center pixel as 0 and the rest as 1. Figure 1 gives an example of how census transform works in a 3 by 3 window.
 
@@ -108,6 +101,18 @@ The Hamming distance of the census transform between two blocks is calculated by
     \caption{Hamming distance of Census transform}
 \end{figure}
 
+\subsection{Evaluation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8.8cm]{702_output_25_50.png}
+    \captionof{figure}{Disparity map output with block size 25 \& search size 50.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=11cm]{stats_25_50.png}
+    \captionof{figure}{Disparity performance with block size 25 \& search size 50. (See Appendix A for bar chart values)}
+\end{figure}
+\section{Analysis}
 It is found that the computational time of pixel-wise disparity calculation is extremely long in this case since experiment photos all have 400 by 881 pixels. The function will iterate $400*881*88=31011200$ times if it searches every pixel on the left image and finds correspondence on the right image on the same line. The iteration must be deducted to improve the method's feasibility.
 
 By setting a search size, the program will not iterate over all pixels laying on the same line on the right image but only within a defined searching window of fixed size. Meanwhile, the function will search those image blocks with center coordinates closer to the original coordinate of the block cropped from the left image first, since the correspondence is more likely to be found in those locations.
