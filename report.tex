@@ -22,8 +22,7 @@ Stereo Disparity
 }
 \maketitle
 \section{Introduction}
-Stereo matching is a process of finding correspondence pixels representing the same point in 3-D reality from images taken from different angles and positions. The disparity can be calculated by
- minus the x coordinate of the right image from the x coordinate of the left image if they are parallel. It is negatively correlated to the depth of the object from the image plane.
+Stereo matching is a process of finding correspondence pixels representing the same point in 3-D reality from images taken from different angles and positions. The disparity can be calculated by minus the x coordinate of the right image from the x coordinate of the left image if they are parallel. It is negatively correlated to the depth of the object from the image plane.
 
 Different cost functions exist for similarity computation. This report selects several window-based matching functions and compared their performance over a set of moving vehicle image pairs. Pixels holding the highest similarity will be tagged as correspondences, and the results will be evaluated by computing the root mean square (RMS) between the calculated disparity and the ground truth.
 \section{Methodology}
