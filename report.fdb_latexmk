@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1666068915 "/home/cedric0303/comp-vis-group-project/report.tex" "report.pdf" "report" 1666068916
+["pdflatex"] 1666091837 "/home/cedric0303/comp-vis-group-project/report.tex" "report.pdf" "report" 1666091839
   "/etc/texmf/web2c/texmf.cnf" 1665907211 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/cedric0303/comp-vis-group-project/report.tex" 1666068914 15969 b97dd4b3849b87e8d33153980f7d739f ""
+  "/home/cedric0303/comp-vis-group-project/report.tex" 1666091837 16748 29143af8ed53d168aa1e11ac9ffef996 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb7t.tfm" 1136768653 2172 fd0c924230362ff848a33632ed45dc23 ""
@@ -76,8 +76,8 @@
   "images/25_50//stats_25_50.png" 1665908911 52327 0f1e4a797edeeabe7db6e7a88309e9a8 ""
   "img2//fig1.png" 1665908911 13953 0a8ba44c87b74feb098f0069f1217b6d ""
   "img2//fig2.png" 1665908911 10874 21787e9295f51b92ff64f71e48c36284 ""
-  "report.aux" 1666068916 3197 2f0158006ce6c27eb93627be82f868e3 "pdflatex"
-  "report.tex" 1666068914 15969 b97dd4b3849b87e8d33153980f7d739f ""
+  "report.aux" 1666091838 3201 64e600fd5413320b8087348e36188105 "pdflatex"
+  "report.tex" 1666091837 16748 29143af8ed53d168aa1e11ac9ffef996 ""
   (generated)
   "report.aux"
   "report.log"

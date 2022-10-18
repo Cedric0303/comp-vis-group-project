@@ -28,7 +28,7 @@ Stereo Disparity
 \pagestyle{plain}
 
 \section{Introduction}
-Stereo matching is a process of finding corresponding pixels representing the same point in 3--D reality from images taken from different angles and positions. The disparity can be calculated by difference between the x pixel coordinate of the right image from the x pixel coordinate of the left image, given that they lie parallel in the image. This is negatively correlated to the depth of the object from the image plane.
+Stereo matching is a process of finding corresponding pixels representing the same point in 3--D reality from images taken from different angles and positions. The disparity can be calculated by difference between the $x$ pixel coordinate of the right image from the $x$ pixel coordinate of the left image, given that they lie parallel in the image. This is negatively correlated to the depth of the object from the image plane.
 
 Different comparison functions exist for similarity calculation. Our report selects several window--based matching functions and compares their performance over a set of moving vehicle image pairs. Pixels pairs with the highest similarity will be tagged as correspondencing pixel pairs, and the results will be evaluated by computing the root mean square (RMS) and pixel error fractions between the calculated disparity and the ground truth.
 
@@ -38,13 +38,13 @@ Before running each image pair through our program to create a disparity map, a 
 
 The program iterates through pixels on the left image, while creating a sliding window of search size 25 in the right image with pixel index from the left image. The sum of absolute difference (SAD) and the sum of square difference (SSD) are selected as the classic similarity measurement functions to start with.
 
-SAD of block W1 and block W2 was calculated by sum of intensity differences between corresponding pixel pairs, as in:
+SAD of block $W1$ and block $W2$ was calculated by sum of intensity differences between corresponding pixel pairs, as in:
 
 \begin{equation*}
     SAD=\sum^{n}_{i=0}\sum^{m}_{j=0}|W1[i,j]-W2[i,j]|
 \end{equation*}
 
-Similarly, the SSD of block W1 and block W2 was calculated by summing up the square of intensity differences between each corresponding pixel pairs, as in:
+Similarly, the SSD of block $W1$ and block $W2$ was calculated by summing up the square of intensity differences between each corresponding pixel pairs, as in:
 
 \begin{equation*}
     SSD=\sum^{n}_{i=0}\sum^{m}_{j=0}(W1[i,j]-W2[i,j])^2
@@ -76,7 +76,7 @@ This results in high RMS value and low pixel error fractions as in Figure 2 belo
 
 \subsection{Implementation}
 
-Due to the low performance and slow program runtime, the original program was modified to interface with different comparison functions including zero mean sum of absolute difference (ZSAD), zero mean sum of squared difference (ZSSD) and Hamming distance of census transform (HD). Furthermore, instead of iterating through each individual pixel to calculate each disparity value, the modified program iterates through a block of size n by n pixels, comparing it with the corresponding sliding window search block of the same height n. 
+Due to the low performance and slow program runtime, the original program was modified to interface with different comparison functions including zero mean sum of absolute difference (ZSAD), zero mean sum of squared difference (ZSSD) and Hamming distance of census transform (HD). Furthermore, instead of iterating through each individual pixel to calculate each disparity value, the modified program iterates through blocks of size $n$ by $n$ pixels, comparing it with the corresponding sliding window search block with the same height $n$. 
 
 For example, we used a pixel block size of 25 (width 25, height 25) on the left image, while searching through the right image with a sliding window of size 50 (width 50, height 25). We assume there is no vertical disparity between the image pairs, therefore only the width of the sliding window is varied.
 
@@ -144,7 +144,7 @@ disparity map calculation is significantly reduced to between 0.4\(\sim\)1.6 sec
         Mean & 16.85 & 19.45 & 14.06 & 14.29 & 16.53 \\
         SD & 2.79 & 2.66 & 2.99 & 2.91 & 2.62
     \end{tabular}
-    \captionof{table}{RMS statistic table values}
+    \captionof{table}{RMS statistic table values.}
 \end{center}
 \begin{center}
     \begin{tabular}{l c c c c c}
@@ -161,7 +161,7 @@ disparity map calculation is significantly reduced to between 0.4\(\sim\)1.6 sec
         SD ($<0.5$) & 0.022 & 0.016 & 0.018 & 0.019 & 0.016 \\
         SD ($<0.25$) & 0.022 & 0.016 & 0.018 & 0.019 & 0.016 \\
     \end{tabular}
-    \captionof{table}{Pixel error fraction statistic table values}
+    \captionof{table}{Pixel error fraction statistic table values.}
 \end{center}
 \begin{center}
     \begin{tabular}{l c c c c c}
@@ -169,14 +169,14 @@ disparity map calculation is significantly reduced to between 0.4\(\sim\)1.6 sec
         Mean & 0.466 & 0.453 & 1.553 & 1.460 & 1.294 \\
         SD & 0.019 & 0.004 & 0.022 & 0.028 & 0.042
     \end{tabular}
-    \captionof{table}{Time taken statistic table values}
+    \captionof{table}{Time taken statistic table values.}
 \end{center}
 
 \section{Analysis}
 
-It was found that the computation time of pixel--wise disparity calculation is extremely long in this case since image pairs from our dataset are of size $400$ pixels by $881$ pixels. The function will iterate $400*881*881=310464400$ times if it searches every pixel on the left image and finds correspondence on the right image on the same line. The iteration must be deducted to improve the program's performance to be feasible for real--time applications.
+It was found that the computation time of pixel--wise disparity calculation is extremely long in this case since image pairs from our dataset are of size 400 pixels by 881 pixels. The function will iterate $400*881*881=310464400$ times if it searches every pixel on the left image and finds correspondence on the right image on the same line. The iteration must be deducted to improve the program's performance to be feasible for real--time applications.
 
-By setting a search size, the program will not iterate over all pixels laying on the same line on the right image but only within a defined searching window of fixed size (example: search size of 25 pixels). Meanwhile, the function will search those image blocks with center coordinates closer to the original coordinate of the block cropped from the left image first, since the correspondence is more likely to be found in those locations. This brings the total iterations performed down to $400*881*25=8810000$, improving the performance of our original implementation by a factor of $35$.
+By setting a search size, the program will not iterate over all pixels laying on the same line on the right image but only within a defined searching window of fixed size (example: search size of 25 pixels). Meanwhile, the function will search those image blocks with center coordinates closer to the original coordinate of the block cropped from the left image first, since the correspondence is more likely to be found in those locations. This brings the total iterations performed down to $400*881*25=8810000$, improving the performance of our original implementation by a factor of 35.
 
 The number of iterations can be further reduced by assuming each pixel in the image block holds the same disparity. By replacing pixel--wise correspondence searching with block--wise correspondence searching, the maximum number of iterations becomes:
 
@@ -184,7 +184,7 @@ The number of iterations can be further reduced by assuming each pixel in the im
     \frac{400*881*(window\_size-block\_width)}{block\_width*block\_height}
 \end{equation*}
 
-With a pixel block size of 25, and search window size of 50, the resulting number of iterations needed to be performed reduces to just $\frac{400*881*(50-25)}{25*25}=14096$ iterations, representing a performance increase by a factor of $22025$ over our original naive pixel iteration implementation.
+With a pixel block size of 25, and search window size of 50, the resulting number of iterations needed to be performed reduces to just $\frac{400*881*(50-25)}{25*25}=14096$ iterations, representing a performance increase by a factor of 22025 over our original naive pixel iteration implementation.
 
 \vspace{4pt}
 \section{Conclusion}
@@ -215,7 +215,7 @@ We observed that with increasing the pixel block size, comparison function runti
         25 & 50 & 0.5 sec & 16.6 \\
         49 & 98 & 0.4 sec & 19.7
     \end{tabular}
-    \captionof{table}{Different pixel block size and sliding window search size performance based on SSD comparison function}
+    \captionof{table}{Different pixel block size and sliding window search size performance based on SSD comparison function.}
 \end{center}
 
 In the end, we chose a pixel block size of 25 and the zero mean sum absolute difference as our final program implementation as it achieves of good balance between output performance and efficient runtime, a significant improvement over our original implementation.
