@@ -8,7 +8,7 @@
 \usepackage{float}
 \usepackage{caption}
 \usepackage[numbib]{tocbibind}
-
+\usepackage{pbox}
 
 \graphicspath{{./img2/}{./images/25_50/}{./images/1_25/}}
 \begin{document}
@@ -193,13 +193,36 @@ SSD and SAD functions perform the fastest, due to the lower number of total calc
 
 We observed that with increasing the pixel block size, comparison function runtime decreases significantly, while the disparity map output performs worse after a certain pixel block size. Pixel block size of 25 proves to be a good middle ground, as the disparity map output has the lowest RMS value, with the comparison functions running between 0.5--2sec to complete.
 
-In the end, we used a pixel block size of 25 and the zero mean sum absolute difference as a significant improvement over our original implementation.
+\begin{center}
+    \begin{tabular}{l c c c}
+        \pbox{4cm}{\textbf{Comparison} \\ \textbf{function}} & \textbf{Runtime} & \textbf{RMS} & \pbox{4cm}{\textbf{Pixel error} \\ \textbf{fractions ($<1$)}} \\ [2ex]
+        SSD & 0.4 sec & 17.6 & 0.31 \\
+        SAD & 0.4 sec & 19.5 & 0.19 \\
+        ZSAD & 1.6 sec & 14.3 & 0.36 \\
+        ZSSD & 1.5 sec & 14.5 & 0.35 \\
+        HD & 1.3 sec & 17.4 & 0.32 
+    \end{tabular}
+    \captionof{table}{Different comparison function performance based on pixel block size of 25, sliding window search size of 50.}
+\end{center}
+
+\begin{center}
+    \begin{tabular}{c c c c}
+        \pbox{4cm}{\textbf{Pixel block} \\ \textbf{size}} & \pbox{4cm}{\textbf{Sldiing window} \\ \textbf{search size}} & \textbf{Runtime} & \textbf{RMS} \\ [2ex]
+        1 & 25 & 187.0 sec & 22.1 \\
+        9 & 49 & 2.9 sec & 18.4 \\
+        25 & 50 & 0.5 sec & 16.6 \\
+        49 & 98 & 0.4 sec & 19.7
+    \end{tabular}
+    \captionof{table}{Different pixel block size and sliding window search size performance based on SSD comparison function}
+\end{center}
+
+In the end, we chose a pixel block size of 25 and the zero mean sum absolute difference as our final program implementation as it achieves of good balance between output performance and efficient runtime, a significant improvement over our original implementation.
 
 \section{Final Thought}
 
 Since our implementation was done in a Jupyter notebook in Python, the program was majorly bottlenecked due to running only in a single process. Most of the block comparison calculations could in theory be parallelized for better performance with opportunities for real time applications such as advanced driver assistance systems (ADAS) in automotives. The idea to parallelize calculations using multiple processes was theorized early, but not implemented due to time \& difficulty constraints of the project.
 
-% \newpage
+\newpage
 \begin{thebibliography}{00}
 \bibitem{1} Schmidt, A., Kraft, M. and Kasiński, A., 2010. An Evaluation of Image Feature Detectors and Descriptors for Robot Navigation. Computer Vision and Graphics, pp.251-259.
 \bibitem{2} Sarika, S., Deepambika, V. and Rahman, M., 2015. Census Filtering Based Stereomatching under Varying Radiometric Conditions. Procedia Computer Science, 58, pp.315-320.
