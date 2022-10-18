@@ -128,7 +128,7 @@ In the output disparity map with a pixel block size of 25 and search size of 50 
     \captionof{figure}{Disparity map output with pixel block size of 25 \& sliding window search size of 50.}
 \end{figure}
 
-After running our improved program through the entire suit of image pairs, the resultw was a much lower mean RMS value and much higher mean pixel error fractions as in Figure 2 below. 
+After running our improved program through the entire suit of image pairs, the result was a much lower mean RMS value and much higher mean pixel error fractions as in Figure 2 below. 
 The time taken for the different comparison functions to complete the
 disparity map calculation is significantly reduced to between 0.4\(\sim\)1.6 seconds per image pair.
 
@@ -189,7 +189,9 @@ With a pixel block size of 25, and search window size of 50, the resulting numbe
 \vspace{4pt}
 \section{Conclusion}
 
-SSD and SAD functions perform the fastest, due to the lower number of total calculations needed to be performed. While the ZSAD and ZSSD functions have much longer runtime due to more calculations performed (3--4 times as much time as SSD and SAD), the output has a lower RMS value and percentage of pixel error fraction, proving to be good choices for estimating more accurate disparity maps, while SSD is better at generating an acceptable disparity map with much less overhead. INSERT HD COMMENT
+SSD and SAD functions perform the fastest, due to the lower number of total calculations needed to be performed. While the ZSAD and ZSSD functions have much longer runtime due to more calculations performed (3--4 times as much time as SSD and SAD), the output has a lower RMS value and percentage of pixel error fraction, proving to be good choices for estimating more accurate disparity maps, while SSD is better at generating an acceptable disparity map with much less overhead. 
+
+HDCT has a slightly lower computational cost compared to ZSAD and ZSSD since the operation is more simple and can be performed bitwise. However, this report uses the NumPy operation instead of the bit operation to avoid increasing the number of total iterations to perform a bitwise comparison. The RMS of HDCT is not as high as ZSAD and ZSSD. The reason behind it might be that certain information is lost while conducting the census transformation on image blocks. The local relations have been classified binarily according to the comparison between each element and the central element while ZSAD and ZSSD maintain more information on correspondences. It loses global information as the cost of considering local patterns while maintain low computational complexity.  
 
 We observed that with increasing the pixel block size, comparison function runtime decreases significantly, while the disparity map output performs worse after a certain pixel block size. Pixel block size of 25 proves to be a good middle ground, as the disparity map output has the lowest RMS value, with the comparison functions running between 0.5--2sec to complete.
 
@@ -207,7 +209,7 @@ We observed that with increasing the pixel block size, comparison function runti
 
 \begin{center}
     \begin{tabular}{c c c c}
-        \pbox{4cm}{\textbf{Pixel block} \\ \textbf{size}} & \pbox{4cm}{\textbf{Sldiing window} \\ \textbf{search size}} & \textbf{Runtime} & \textbf{RMS} \\ [2ex]
+        \pbox{4cm}{\textbf{Pixel block} \\ \textbf{size}} & \pbox{4cm}{\textbf{Sliding window} \\ \textbf{search size}} & \textbf{Runtime} & \textbf{RMS} \\ [2ex]
         1 & 25 & 187.0 sec & 22.1 \\
         9 & 49 & 2.9 sec & 18.4 \\
         25 & 50 & 0.5 sec & 16.6 \\
